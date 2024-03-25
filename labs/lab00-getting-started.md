@@ -11,12 +11,11 @@ It consists of:
 During the lab you will interact with the OpenShift cluster via CLI from the workstation and with the OpenShift web console from the browser available on your station.
 Make note of the URLs that you will use during the lab.
 
-|===
-| Machine | URL | Access
-| Workstation | `ssh.ocpv01.<WORKSTATION_HOST_ID>.infra.demo.redhat.com` | SSH (custom port)
-| OpenShift console | `console-openshift-console.apps.cluster-<GUID>.dynamic.redhatworkshops.io` | HTTPS (port 443)
-| OpenShift API | `api.cluster-<GUID>.dynamic.redhatworkshops.io` | HTTPS (port 6443)
-|===
+|Machine|URL|Access|
+|---|---|---|
+|Workstation|`ssh.ocpv01.<WORKSTATION_HOST_ID>.infra.demo.redhat.com`|SSH (custom port)|
+|OpenShift console|`console-openshift-console.apps.cluster-<GUID>.dynamic.redhatworkshops.io`|HTTPS (port 443)|
+|OpenShift API|`api.cluster-<GUID>.dynamic.redhatworkshops.io`|HTTPS (port 6443)|
 
 Every lab assumes that you have access to the workstation via SSH for CLI interaction and to the OpenShift web console.
 
