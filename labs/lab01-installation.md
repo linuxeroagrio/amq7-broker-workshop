@@ -1,33 +1,43 @@
-# Lab 1. RHEL Installation
+# Lab 1. Installation
 
-## Download zip file from Red Hat Customer Portal
+## RHEL Installation
+
+### Download zip file from Red Hat Customer Portal
 
 1. Login to workstation machine
 
-1. Download 
+1. Create the workshop directory
 
-1. Open a browser to log in to the Red Hat developer portal at  https://developers.redhat.com/products/amq/download
+```bash
+mkdir -vp $HOME/workshop-amq && cd $HOME/workshop-amq && pwd
+```
 
-1. Scroll down to the **All Downloads** section
+3. Download the zip file fom AMQ Broker
 
-1. Find the **GA December 2020** group
+```bash
+wget https://developers.redhat.com/content-gateway/file/amq/GA_April_2023/amq-broker-7.11.0-bin.zip
+```
 
-1. In the table click on the **AMQ Broker** button to download [Red Hat AMQ Broker 7.8.0](https://developers.redhat.com/download-manager/file/amq-broker-7.8.0-bin.zip)
+> **NOTE**
+> Where does the zip file come from?
+> The installation files for AMQ Broker can be downloaded from [Download Red Hat AMQ](https://developers.redhat.com/products/amq/download).
 
-   > You will need to login into the portal using your Red Hat developer or customer account.
 
-## Install the software by unzipping the file into the designated workshop path ($HOME/workshop-amq)
+### Install the software by unzipping the file into the designated workshop path ($HOME/workshop-amq)
 
-```sh
-$ unzip amq-broker-1.8.0-bin.zip
+```bash
+unzip amq-broker-7.11.0-bin.zip
+cd apache-artemis-2.28.0.redhat-00003
 ```
 
 > The directory created by extracting the archive will be referenced now on as **AMQ_HOME**
 
-## Directory Structure
+### Directory Structure
 
-```sh
-$ tree
+```bash
+export AMQ_HOME=$HOME/workshop-amq/apache-artemis-2.28.0.redhat-00003
+
+ls -l ${AMQ_HOME}
 |-- bin
 |-- etc
 |-- examples
@@ -39,10 +49,14 @@ $ tree
 | Folder | Description |
 | ------ | ----------- |
 | bin    | AMQ scripts and native journal lib |
-| etc    | Red Hat branding and extra configuration |
 | examples | Full set of runnable JMS and Java EE examples |
 | lib    | The AMQ 7 runtime jars and libraries |
 | schema | XML Schema to validate the AMQ configuration files |
 | web    | Web loaded with hawt.io console, jolokia |
 
+## OCP Installation
+
+### Install AMQ Broker Operator
+
+1. 
 End of Lab 1.
