@@ -6,7 +6,7 @@
 
 1. Login to workstation machine
 
-1. Create the workshop directory
+2. Create the workshop directory
 
 ```bash
 mkdir -vp $HOME/workshop-amq && cd $HOME/workshop-amq && pwd
@@ -58,5 +58,41 @@ ls -l ${AMQ_HOME}
 
 ### Install AMQ Broker Operator
 
-1. 
+1. Login to workstation machine
+
+```bash
+oc new-project amq-broker
+```
+
+2. Create the subscription for the AMQ Broker Operator
+```bash
+cat << EOF | oc apply -f -
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: amq-broker-rhel8
+  namespace: openshift-operators
+spec:
+  channel: 7.11.x
+  installPlanApproval: Automatic
+  name: amq-broker-rhel8
+  source: redhat-operators
+  sourceNamespace: openshift-marketplace
+EOF
+```
+
+3. Validate the installation of the operator
+```bash
+oc get sub,ip,csv -n openshift-operators
+
+NAME                                                 PACKAGE            SOURCE             CHANNEL
+subscription.operators.coreos.com/amq-broker-rhel8   amq-broker-rhel8   redhat-operators   7.11.x
+
+NAME                                             CSV                                 APPROVAL    APPROVED
+installplan.operators.coreos.com/install-vmr5p   amq-broker-operator.v7.11.6-opr-2   Automatic   true
+
+NAME                                                                           DISPLAY                                                   VERSION        REPLACES                            PHASE
+clusterserviceversion.operators.coreos.com/amq-broker-operator.v7.11.6-opr-2   Red Hat Integration - AMQ Broker for RHEL 8 (Multiarch)   7.11.6-opr-2   amq-broker-operator.v7.11.5-opr-1   Succeeded
+```
+
 End of Lab 1.
