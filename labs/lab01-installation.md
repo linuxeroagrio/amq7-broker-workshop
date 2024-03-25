@@ -1,6 +1,10 @@
-# Lab 1. Installation
+# Lab 1. RHEL Installation
 
 ## Download zip file from Red Hat Customer Portal
+
+1. Login to workstation machine
+
+1. Download 
 
 1. Open a browser to log in to the Red Hat developer portal at  https://developers.redhat.com/products/amq/download
 

@@ -27,10 +27,8 @@ By default, you have access to the cluster API via workstation machine login wit
 It should be used for logging in both via CLI and web console.
 The password will be provided by the instructors.
 
-[NOTE]
-.Remember your GUID
-At the start of the lab you have been provided with a GUID, which uniquely identifies your lab environment.
-In the following instructions, replace the `<GUID>` placeholder with your GUID.
-For example, if your GUID is `a2b3`, the URL `console-openshift-console.apps.cluster-<GUID>.dynamic.redhatworkshops.io` becomes `console-openshift-console.apps.cluster-a2b3.dynamic.redhatworkshops.io`.
+> **Note** 
+> At the start of the lab you have been provided with a GUID, which uniquely identifies your lab environment.
+> In the following instructions, replace the `<GUID>` placeholder with your GUID. For example, if your GUID is `a2b3`, the URL `console-openshift-console.apps.cluster-<GUID>.dynamic.redhatworkshops.io` becomes `console-openshift-console.apps.cluster-a2b3.dynamic.redhatworkshops.io`.
 
 Now, let's start the lab.
