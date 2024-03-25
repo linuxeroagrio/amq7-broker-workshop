@@ -1,39 +1,37 @@
-# Lab 0. Getting Started
+# Environment
 
-## Install Preparation
+## Lab environment
 
-This workshop requires you to use your own laptop and have the following prerequisites installed:
+The lab environment provides a virtualized setup for developing and running Kafka applications on OpenShift.
+It consists of:
 
-### Hardware requirements
+* an OpenShift cluster with three control plane nodes and three worker nodes;
+* a workstation machine;
 
-* Operating System
-  * Mac OS X (10.8 or later) or
-  * Windows 7 (SP1) / 10 or
-  * Fedora (21 or later) or
-  * Red Hat Enterprise Linux 7
-* Memory: At least 2 GB+, preferred 4 GB
+During the lab you will interact with the OpenShift cluster via CLI from the workstation and with the OpenShift web console from the browser available on your station.
+Make note of the URLs that you will use during the lab.
 
-### Software requirements
+|===
+| Machine | URL | Access
+| Workstation | `ssh.ocpv01.<WORKSTATION_HOST_ID>.infra.demo.redhat.com` | SSH (custom port)
+| OpenShift console | `console-openshift-console.apps.cluster-<GUID>.dynamic.redhatworkshops.io` | HTTPS (port 443)
+| OpenShift API | `api.cluster-<GUID>.dynamic.redhatworkshops.io` | HTTPS (port 6443)
+|===
 
-* Web Browser (preferably Chrome or Firefox)
-* Git client -- [download here](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
-* GitHub access (to clone the example code)
-* Red Hat Developer or Red Hat customer portal account
+Every lab assumes that you have access to the workstation via SSH for CLI interaction and to the OpenShift web console.
 
-For running AMQ 7 Broker
+Before you start any lab, make sure you are logged into the workstation via SSH with the password and port that has been provided by the instructors.
 
-* **Java Runtime Engine (JRE) 8** --[download here](https://developers.redhat.com/products/openjdk/download)
-* LibAIO (Optional)
+     ssh lab-user@ssh.ocpv01.<WORKSTATION_HOST_ID>.infra.demo.redhat.com -p <CUSTOM-SSH-PORT>
 
-For running the example code
-* **Java Development Kit (JDK) 8** -- [download here](https://developers.redhat.com/products/openjdk/download)
-* **Maven 3.3** -- [download here](https://maven.apache.org/download.cgi)
+By default, you have access to the cluster API via workstation machine login with system:admin user, but, if you prefer, you can access with an `admin` user.
+It should be used for logging in both via CLI and web console.
+The password will be provided by the instructors.
 
+[NOTE]
+.Remember your GUID
+At the start of the lab you have been provided with a GUID, which uniquely identifies your lab environment.
+In the following instructions, replace the `<GUID>` placeholder with your GUID.
+For example, if your GUID is `a2b3`, the URL `console-openshift-console.apps.cluster-<GUID>.dynamic.redhatworkshops.io` becomes `console-openshift-console.apps.cluster-a2b3.dynamic.redhatworkshops.io`.
 
-If installing from supported version of Red Hat Enterprise Linux you can use yum command to install pre-requisites.
-
-``` sh
-$ sudo yum install java-1.8.0-openjdk-devel maven git
-```
-
-End of Lab 0.
+Now, let's start the lab.
