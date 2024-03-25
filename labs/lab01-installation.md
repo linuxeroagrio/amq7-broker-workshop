@@ -60,10 +60,6 @@ ls -l ${AMQ_HOME}
 
 1. Login to workstation machine
 
-```bash
-oc new-project amq-broker
-```
-
 2. Create the subscription for the AMQ Broker Operator
 ```bash
 cat << EOF | oc apply -f -
