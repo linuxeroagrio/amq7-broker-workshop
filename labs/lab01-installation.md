@@ -15,7 +15,7 @@ mkdir -vp $HOME/workshop-amq && cd $HOME/workshop-amq && pwd
 3. Download the zip file fom AMQ Broker
 
 ```bash
-wget https://developers.redhat.com/content-gateway/file/amq/GA_April_2023/amq-broker-7.11.0-bin.zip
+wget https://github.com/linuxeroagrio/amq7-broker-workshop/raw/bpd/bin/amq-broker-7.11.0-bin.zip
 ```
 
 > **NOTE**
