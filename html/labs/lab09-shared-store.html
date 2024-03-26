@@ -154,7 +154,7 @@ Gracefully Stopping artemis-service
 Gracefully Stopping artemis-service
 </code></pre>
 <ol start="2">
-<li>Open a new terminal and create a live <code>libeBroker</code> broker</li>
+<li>Open a new terminal and create a live <code>liveBroker</code> broker</li>
 </ol>
 <pre><code class="language-bash"><span class="hljs-built_in">export</span> AMQ_HOME=<span class="hljs-variable">$HOME</span>/workshop-amq/apache-artemis-2.28.0.redhat-00003
 <span class="hljs-variable">${AMQ_HOME}</span>/bin/artemis create --shared-store --failover-on-shutdown --data <span class="hljs-variable">${AMQ_HOME}</span>/instances/liveBroker/data --user admin --password password --role admin --allow-anonymous y --clustered --host 127.0.0.1 --cluster-user clusterUser --cluster-password clusterPassword --max-hops 1 <span class="hljs-variable">${AMQ_HOME}</span>/instances/liveBroker

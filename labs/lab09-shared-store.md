@@ -15,7 +15,7 @@ ${AMQ_HOME}/instances/broker2/bin/artemis-service stop
 Gracefully Stopping artemis-service
 ```
 
-2. Open a new terminal and create a live `libeBroker` broker
+2. Open a new terminal and create a live `liveBroker` broker
 
 ```bash
 export AMQ_HOME=$HOME/workshop-amq/apache-artemis-2.28.0.redhat-00003
