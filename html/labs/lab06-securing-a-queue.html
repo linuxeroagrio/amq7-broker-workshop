@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Lab 6&period; Securing a Queue</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+            <h1 id="lab-6-securing-a-queue">Lab 6. Securing a Queue</h1>
+<h2 id="rhel-securing-a-queue">RHEL Securing a Queue</h2>
+<h3 id="adding-security-to-a-queue">Adding security to a Queue</h3>
+<ol>
+<li>In the workstation machine, add a new user <code>myuser</code> to the broker instance</li>
+</ol>
+<pre><code class="language-bash"><span class="hljs-built_in">export</span> AMQ_HOME=<span class="hljs-variable">$HOME</span>/workshop-amq/apache-artemis-2.28.0.redhat-00003
+<span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;myuser=mypassword&quot;</span> &gt;&gt; <span class="hljs-variable">${AMQ_HOME}</span>/instances/mybroker/etc/artemis-users.properties
+<span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;mygroup=myuser&quot;</span> &gt;&gt; <span class="hljs-variable">${AMQ_HOME}</span>/instances/mybroker/etc/artemis-roles.properties
+</code></pre>
+<ol start="2">
+<li>Update the security settings to only allow <strong>send</strong> to the new user’s role <code>mygroup</code> in the <code>${AMQ_HOME}/etc/broker.xml</code> file</li>
+</ol>
+<pre><code class="language-bash">vim <span class="hljs-variable">${AMQ_HOME}</span>/instances/mybroker/etc/broker.xml
+</code></pre>
+<pre><code class="language-XML">  <span class="hljs-tag">&lt;<span class="hljs-name">security-settings</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">security-setting</span> <span class="hljs-attr">match</span>=<span class="hljs-string">&quot;#&quot;</span>&gt;</span>
+     ...
+         <span class="hljs-tag">&lt;<span class="hljs-name">permission</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;consume&quot;</span> <span class="hljs-attr">roles</span>=<span class="hljs-string">&quot;admin&quot;</span>/&gt;</span>
+         <span class="hljs-tag">&lt;<span class="hljs-name">permission</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;browse&quot;</span> <span class="hljs-attr">roles</span>=<span class="hljs-string">&quot;admin&quot;</span>/&gt;</span>
+         <span class="hljs-tag">&lt;<span class="hljs-name">permission</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;send&quot;</span> <span class="hljs-attr">roles</span>=<span class="hljs-string">&quot;admin,mygroup&quot;</span>/&gt;</span>
+         <span class="hljs-comment">&lt;!-- we need this otherwise ./artemis data imp wouldn&#x27;t work --&gt;</span>
+         <span class="hljs-tag">&lt;<span class="hljs-name">permission</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;manage&quot;</span> <span class="hljs-attr">roles</span>=<span class="hljs-string">&quot;admin&quot;</span>/&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-name">security-setting</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">security-settings</span>&gt;</span>
+</code></pre>
+<ol start="3">
+<li>Start the broker or restart in case it’s already running.</li>
+</ol>
+<pre><code class="language-bash"><span class="hljs-variable">${AMQ_HOME}</span>/instances/mybroker/bin/artemis-service restart
+Restarting artemis-service
+artemis-service is now running (4723)
+</code></pre>
+<h3 id="testing-the-security-settings">Testing the Security Settings</h3>
+<ol>
+<li>In a new terminal, test sending messages to the previously created topic testTopic</li>
+</ol>
+<pre><code class="language-bash"><span class="hljs-built_in">export</span> AMQ_HOME=<span class="hljs-variable">$HOME</span>/workshop-amq/apache-artemis-2.28.0.redhat-00003
+<span class="hljs-variable">${AMQ_HOME}</span>/instances/mybroker/bin/artemis producer --destination topic://testTopic --message-count 10 --user myuser --password mypassword
+</code></pre>
+<ol start="2">
+<li>In a third terminal, test consuming messages from the same topic using the new user.</li>
+</ol>
+<pre><code class="language-bash"><span class="hljs-built_in">export</span> AMQ_HOME=<span class="hljs-variable">$HOME</span>/workshop-amq/apache-artemis-2.28.0.redhat-00003
+<span class="hljs-variable">${AMQ_HOME}</span>/instances/mybroker/bin/artemis consumer --destination topic://testTopic --message-count 10 --user myuser --password mypassword
+</code></pre>
+<p>You will get an ActiveMQSecurityException</p>
+<pre><code class="language-bash">Consumer ActiveMQTopic[testTopic], thread=0 <span class="hljs-built_in">wait</span> until 10 messages are consumed
+javax.jms.JMSSecurityException: AMQ229213: User: myuser does not have permission=<span class="hljs-string">&#x27;CREATE_NON_DURABLE_QUEUE&#x27;</span> <span class="hljs-keyword">for</span> queue e6595d13-6ad2-4e5a-82b2-fc6bc34b0dbf on address testTopic
+	at org.apache.activemq.artemis.core.protocol.core.impl.ChannelImpl.sendBlocking(ChannelImpl.java:558)
+	at org.apache.activemq.artemis.core.protocol.core.impl.ChannelImpl.sendBlocking(ChannelImpl.java:450)
+	at org.apache.activemq.artemis.core.protocol.core.impl.ActiveMQSessionContext.createQueue(ActiveMQSessionContext.java:854)
+	at org.apache.activemq.artemis.core.client.impl.ClientSessionImpl.internalCreateQueue(ClientSessionImpl.java:2071)
+	at org.apache.activemq.artemis.core.client.impl.ClientSessionImpl.createQueue(ClientSessionImpl.java:316)
+	at org.apache.activemq.artemis.jms.client.ActiveMQSession.createTemporaryQueue(ActiveMQSession.java:1262)
+	at org.apache.activemq.artemis.jms.client.ActiveMQSession.createConsumer(ActiveMQSession.java:842)
+	at org.apache.activemq.artemis.jms.client.ActiveMQSession.createConsumer(ActiveMQSession.java:477)
+	at org.apache.activemq.artemis.jms.client.ActiveMQSession.createConsumer(ActiveMQSession.java:449)
+	at org.apache.activemq.artemis.cli.commands.messages.ConsumerThread.consume(ConsumerThread.java:178)
+	at org.apache.activemq.artemis.cli.commands.messages.ConsumerThread.run(ConsumerThread.java:67)
+Caused by: ActiveMQSecurityException[errorType=SECURITY_EXCEPTION message=AMQ229213: User: myuser does not have permission=<span class="hljs-string">&#x27;CREATE_NON_DURABLE_QUEUE&#x27;</span> <span class="hljs-keyword">for</span> queue e6595d13-6ad2-4e5a-82b2-fc6bc34b0dbf on address testTopic]
+	... 11 more
+Consumer ActiveMQTopic[testTopic], thread=0 Consumer thread finished
+</code></pre>
+<ol start="3">
+<li>Exit from the consumer and producer terminal sessions.</li>
+</ol>
+<h2 id="ocp-securing-a-queue">OCP Securing a Queue</h2>
+<h3 id="adding-security-to-a-queue-1">Adding security to a Queue</h3>
+<ol>
+<li>In the workstation machine, add a <code>ActiveMQArtemisSecurity</code> resource</li>
+</ol>
+<pre><code class="language-bash"><span class="hljs-built_in">cat</span> &lt;&lt;<span class="hljs-string">EOF | oc apply -f -
+apiVersion: broker.amq.io/v1alpha1
+kind: ActiveMQArtemisSecurity
+metadata:
+  name: ex-prop
+  namespace: amq-broker
+spec:
+  loginModules:
+    propertiesLoginModules:
+      - name: &quot;prop-module&quot;
+        users:
+          - name: &quot;myuser&quot;
+            password: &quot;mypassword&quot;
+            roles:
+              - &quot;mygroup&quot;
+  securityDomains:
+    brokerDomain:
+      name: &quot;activemq&quot;
+      loginModules:
+        - name: &quot;prop-module&quot;
+          flag: &quot;sufficient&quot;
+  securitySettings:
+    broker:
+      - match: &quot;#&quot;
+        permissions:
+          - operationType: &quot;send&quot;
+            roles:
+              - &quot;mygroup&quot;
+EOF</span>
+
+oc get ActiveMQArtemisSecurity ex-prop -n amq-broker
+
+NAME      AGE
+ex-prop   22s
+</code></pre>
+<h3 id="testing-the-security-settings-1">Testing the Security Settings</h3>
+<ol>
+<li>In a new terminal, test sending messages to the previously created topic testTopic</li>
+</ol>
+<pre><code class="language-bash">oc <span class="hljs-built_in">exec</span> -ti ex-aao-ss-0 -c ex-aao-container -n amq-broker -- amq-broker/bin/artemis producer --url tcp://ex-aao-ss-0.ex-aao-hdls-svc.amq-broker.svc.cluster.local:61616 --user myuser --password mypassword --destination topic://testTopic --message-count 10
+</code></pre>
+<ol start="2">
+<li>In a third terminal, test consuming messages from the same topic using the new user.</li>
+</ol>
+<pre><code class="language-bash">oc <span class="hljs-built_in">exec</span> -ti ex-aao-ss-0 -c ex-aao-container -n amq-broker -- amq-broker/bin/artemis consumer --url tcp://ex-aao-ss-0.ex-aao-hdls-svc.amq-broker.svc.cluster.local:61616 --user myuser --password mypassword --destination topic://testTopic --message-count 10
+</code></pre>
+<p>You will get an ActiveMQSecurityException</p>
+<pre><code class="language-bash">oc <span class="hljs-built_in">exec</span> -ti ex-aao-ss-0 -c ex-aao-container -n amq-broker -- amq-broker/bin/artemis consumer --url tcp://ex-aao-ss-0.ex-aao-hdls-svc.amq-broker.svc.cluster.local:61616 --user myuser --password mypassword --destination topic://testTopic --message-count 10
+
+Connection brokerURL = tcp://ex-aao-ss-0.ex-aao-hdls-svc.amq-broker.svc.cluster.local:61616
+Consumer:: filter = null
+Consumer ActiveMQTopic[testTopic], thread=0 <span class="hljs-built_in">wait</span> until 10 messages are consumed
+javax.jms.JMSSecurityException: AMQ229213: User: myuser does not have permission=<span class="hljs-string">&#x27;CREATE_NON_DURABLE_QUEUE&#x27;</span> <span class="hljs-keyword">for</span> queue 66d29a9f-7063-42b0-9828-ec069bf77f74 on address testTopic
+	at org.apache.activemq.artemis.core.protocol.core.impl.ChannelImpl.sendBlocking(ChannelImpl.java:560)
+	at org.apache.activemq.artemis.core.protocol.core.impl.ChannelImpl.sendBlocking(ChannelImpl.java:452)
+	at org.apache.activemq.artemis.core.protocol.core.impl.ActiveMQSessionContext.createQueue(ActiveMQSessionContext.java:859)
+	at org.apache.activemq.artemis.core.client.impl.ClientSessionImpl.internalCreateQueue(ClientSessionImpl.java:2071)
+	at org.apache.activemq.artemis.core.client.impl.ClientSessionImpl.createQueue(ClientSessionImpl.java:316)
+	at org.apache.activemq.artemis.jms.client.ActiveMQSession.createTemporaryQueue(ActiveMQSession.java:1287)
+	at org.apache.activemq.artemis.jms.client.ActiveMQSession.createConsumer(ActiveMQSession.java:848)
+	at org.apache.activemq.artemis.jms.client.ActiveMQSession.createConsumer(ActiveMQSession.java:481)
+	at org.apache.activemq.artemis.jms.client.ActiveMQSession.createConsumer(ActiveMQSession.java:453)
+	at org.apache.activemq.artemis.cli.commands.messages.ConsumerThread.consume(ConsumerThread.java:178)
+	at org.apache.activemq.artemis.cli.commands.messages.ConsumerThread.run(ConsumerThread.java:67)
+Caused by: ActiveMQSecurityException[errorType=SECURITY_EXCEPTION message=AMQ229213: User: myuser does not have permission=<span class="hljs-string">&#x27;CREATE_NON_DURABLE_QUEUE&#x27;</span> <span class="hljs-keyword">for</span> queue 66d29a9f-7063-42b0-9828-ec069bf77f74 on address testTopic]
+	... 11 more
+Consumer ActiveMQTopic[testTopic], thread=0 Consumer thread finished
+</code></pre>
+<p>End of Lab 6.</p>
+
+            <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+            
+        </body>
+        </html>

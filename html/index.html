@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Introduction</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+            <h1 id="red-hat-integration-amq-broker-workshop">Red Hat Integration: AMQ Broker Workshop</h1>
+<h3 id="introduction">Introduction</h3>
+<p>Red Hat AMQ provides fast, lightweight, and secure messaging for Internet-scale applications. AMQ components use industry-standard message protocols and support a wide range of programming languages and operating environments. AMQ gives you the strong foundation you need to build modern distributed applications.</p>
+<h3 id="audience">Audience</h3>
+<ul>
+<li>Developers</li>
+<li>Architects</li>
+<li>Data Integrators</li>
+</ul>
+<h3 id="duration">Duration</h3>
+<p>This workshop introduces participants to AMQ through a presentation and hands-on lab format. This workshop is intended to be completed in a half-day (4hrs) session.</p>
+<h3 id="agenda">Agenda</h3>
+<p>The proposed agenda should look like the following.</p>
+<ul>
+<li>Red Hat AMQ Overview
+<ul>
+<li>Technical Overview of the AMQ 7 Broker</li>
+</ul>
+</li>
+<li>Getting Started
+<ul>
+<li>Installing and running the AMQ 7 Broker</li>
+</ul>
+</li>
+<li>Broker Configuration
+<ul>
+<li>Acceptors, Connectors and Addressing</li>
+</ul>
+</li>
+<li>Networking Brokers
+<ul>
+<li>Clustered Brokers</li>
+</ul>
+</li>
+<li>High Availability
+<ul>
+<li>Shared Store and Replicated Journals (Shared Nothing)</li>
+</ul>
+</li>
+<li>Security
+<ul>
+<li>Management Security</li>
+</ul>
+</li>
+<li>Hands-on labs</li>
+</ul>
+<h3 id="labs">Labs</h3>
+<p>The main idea of the workshop is to present to the student a set of hands-on labs to test the features of the AMQ Broker. The following labs should cover the main aspects of the product.</p>
+<ul>
+<li><a href="labs/lab00-getting-started.html">Lab 00</a> - Getting Started</li>
+<li><a href="labs/lab01-installation.html">Lab 01</a> - Installation</li>
+<li><a href="labs/lab02-creating-a-broker-instance.html">Lab 02</a> - Creating a Broker</li>
+<li><a href="labs/lab03-running-a-broker-instance.html">Lab 03</a> - Running a Broker</li>
+<li><a href="labs/lab04-configuring-a-queue.html">Lab 04</a> - Configuring a Queue</li>
+<li><a href="labs/lab05-configuring-a-topic.html">Lab 05</a> - Configuring a Topic</li>
+<li><a href="labs/lab06-securing-a-queue.html">Lab 06</a> - Securing a Queue</li>
+<li><a href="labs/lab07-clustered-brokers.html">Lab 07</a> - Clustered Brokers</li>
+<li><a href="labs/lab08-clustered-queue.html">Lab 08</a> - Clustered Queues</li>
+<li><a href="labs/lab09-shared-store.html">Lab 09</a> - Shared Store HA</li>
+<li><a href="labs/lab10-shared-nothing.html">Lab 10</a> - Replicated HA (Shared Nothing)</li>
+</ul>
+<h3 id="contributing">Contributing</h3>
+<p>We welcome all forms of contribution (content, issues/bugs, feedback).</p>
+<h3 id="support-and-ownership">Support and ownership</h3>
+<p>If you have any questions or are in need of support, reach out to <a href="https://github.com/hguerrero">Hugo Guerrero</a></p>
+
+            
+            
+        </body>
+        </html>

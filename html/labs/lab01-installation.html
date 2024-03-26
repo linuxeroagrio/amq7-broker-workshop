@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Lab 1&period; Installation</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+            <h1 id="lab-1-installation">Lab 1. Installation</h1>
+<h2 id="rhel-installation">RHEL Installation</h2>
+<h3 id="download-zip-file-from-red-hat-customer-portal">Download zip file from Red Hat Customer Portal</h3>
+<ol>
+<li>
+<p>Login to workstation machine</p>
+</li>
+<li>
+<p>Create the workshop directory</p>
+</li>
+</ol>
+<pre><code class="language-bash"><span class="hljs-built_in">mkdir</span> -vp <span class="hljs-variable">$HOME</span>/workshop-amq &amp;&amp; <span class="hljs-built_in">cd</span> <span class="hljs-variable">$HOME</span>/workshop-amq &amp;&amp; <span class="hljs-built_in">pwd</span>
+</code></pre>
+<ol start="3">
+<li>Download the zip file fom AMQ Broker</li>
+</ol>
+<pre><code class="language-bash">wget https://github.com/linuxeroagrio/amq7-broker-workshop/raw/bpd/bin/amq-broker-7.11.0-bin.zip
+</code></pre>
+<blockquote>
+<p><strong>NOTE</strong>
+Where does the zip file come from?
+The installation files for AMQ Broker can be downloaded from <a href="https://developers.redhat.com/products/amq/download">Download Red Hat AMQ</a>.</p>
+</blockquote>
+<h3 id="install-the-software-by-unzipping-the-file-into-the-designated-workshop-path-homeworkshop-amq">Install the software by unzipping the file into the designated workshop path ($HOME/workshop-amq)</h3>
+<pre><code class="language-bash">unzip amq-broker-7.11.0-bin.zip
+<span class="hljs-built_in">cd</span> apache-artemis-2.28.0.redhat-00003
+</code></pre>
+<blockquote>
+<p>The directory created by extracting the archive will be referenced now on as <strong>AMQ_HOME</strong></p>
+</blockquote>
+<h3 id="directory-structure">Directory Structure</h3>
+<pre><code class="language-bash"><span class="hljs-built_in">export</span> AMQ_HOME=<span class="hljs-variable">$HOME</span>/workshop-amq/apache-artemis-2.28.0.redhat-00003
+
+<span class="hljs-built_in">ls</span> -l <span class="hljs-variable">${AMQ_HOME}</span>
+|-- bin
+|-- etc
+|-- examples
+|-- lib
+|-- schema
+`-- web
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Folder</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>bin</td>
+<td>AMQ scripts and native journal lib</td>
+</tr>
+<tr>
+<td>examples</td>
+<td>Full set of runnable JMS and Java EE examples</td>
+</tr>
+<tr>
+<td>lib</td>
+<td>The AMQ 7 runtime jars and libraries</td>
+</tr>
+<tr>
+<td>schema</td>
+<td>XML Schema to validate the AMQ configuration files</td>
+</tr>
+<tr>
+<td>web</td>
+<td>Web loaded with <a href="http://hawt.io">hawt.io</a> console, jolokia</td>
+</tr>
+</tbody>
+</table>
+<h2 id="ocp-installation">OCP Installation</h2>
+<h3 id="install-amq-broker-operator">Install AMQ Broker Operator</h3>
+<ol>
+<li>
+<p>Login to workstation machine</p>
+</li>
+<li>
+<p>Create the subscription for the AMQ Broker Operator</p>
+</li>
+</ol>
+<pre><code class="language-bash"><span class="hljs-built_in">cat</span> &lt;&lt; <span class="hljs-string">EOF | oc apply -f -
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: amq-broker-rhel8
+  namespace: openshift-operators
+spec:
+  channel: 7.11.x
+  installPlanApproval: Automatic
+  name: amq-broker-rhel8
+  source: redhat-operators
+  sourceNamespace: openshift-marketplace
+EOF</span>
+</code></pre>
+<ol start="3">
+<li>Validate the installation of the operator</li>
+</ol>
+<pre><code class="language-bash">oc get sub,ip,csv -n openshift-operators
+
+NAME                                                 PACKAGE            SOURCE             CHANNEL
+subscription.operators.coreos.com/amq-broker-rhel8   amq-broker-rhel8   redhat-operators   7.11.x
+
+NAME                                             CSV                                 APPROVAL    APPROVED
+installplan.operators.coreos.com/install-vmr5p   amq-broker-operator.v7.11.6-opr-2   Automatic   <span class="hljs-literal">true</span>
+
+NAME                                                                           DISPLAY                                                   VERSION        REPLACES                            PHASE
+clusterserviceversion.operators.coreos.com/amq-broker-operator.v7.11.6-opr-2   Red Hat Integration - AMQ Broker <span class="hljs-keyword">for</span> RHEL 8 (Multiarch)   7.11.6-opr-2   amq-broker-operator.v7.11.5-opr-1   Succeeded
+</code></pre>
+<p>End of Lab 1.</p>
+
+            <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+            
+        </body>
+        </html>

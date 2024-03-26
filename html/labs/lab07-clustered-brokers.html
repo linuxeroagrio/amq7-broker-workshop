@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Lab 7&period; Clustered Brokers</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+            <h1 id="lab-7-clustered-brokers">Lab 7. Clustered Brokers</h1>
+<h2 id="rhel-create-a-pair-of-brokers">RHEL Create a pair of brokers</h2>
+<ol>
+<li>In the workstation machine stop <code>mybroker</code> broker</li>
+</ol>
+<pre><code class="language-bash"><span class="hljs-built_in">export</span> AMQ_HOME=<span class="hljs-variable">$HOME</span>/workshop-amq/apache-artemis-2.28.0.redhat-00003
+<span class="hljs-variable">${AMQ_HOME}</span>/instances/mybroker/bin/artemis-service stop
+
+Gracefully Stopping artemis-service
+</code></pre>
+<ol start="2">
+<li>Open a new terminal and create <code>broker1</code> broker</li>
+</ol>
+<pre><code class="language-bash"><span class="hljs-built_in">export</span> AMQ_HOME=<span class="hljs-variable">$HOME</span>/workshop-amq/apache-artemis-2.28.0.redhat-00003
+<span class="hljs-variable">${AMQ_HOME}</span>/bin/artemis create --user admin --password password --role admin --allow-anonymous y --clustered --host 127.0.0.1 --cluster-user clusterUser --cluster-password clusterPassword --max-hops 1 <span class="hljs-variable">${AMQ_HOME}</span>/instances/broker1
+
+Creating ActiveMQ Artemis instance at: /home/lab-user/workshop-amq/apache-artemis-2.28.0.redhat-00003/instances/broker1
+
+Auto tuning journal ...
+<span class="hljs-keyword">done</span>! Your system can make 1.36 writes per millisecond, your journal-buffer-timeout will be 736000
+
+You can now start the broker by executing:  
+
+   <span class="hljs-string">&quot;/home/lab-user/workshop-amq/apache-artemis-2.28.0.redhat-00003/instances/broker1/bin/artemis&quot;</span> run
+
+Or you can run the broker <span class="hljs-keyword">in</span> the background using:
+
+   <span class="hljs-string">&quot;/home/lab-user/workshop-amq/apache-artemis-2.28.0.redhat-00003/instances/broker1/bin/artemis-service&quot;</span> start
+</code></pre>
+<ol start="3">
+<li>In a new terminal create <code>broker2</code> broker</li>
+</ol>
+<pre><code class="language-bash"><span class="hljs-built_in">export</span> AMQ_HOME=<span class="hljs-variable">$HOME</span>/workshop-amq/apache-artemis-2.28.0.redhat-00003
+<span class="hljs-variable">${AMQ_HOME}</span>/bin/artemis create  --user admin --password password --role admin --allow-anonymous y --clustered --host 127.0.0.1 --cluster-user clusterUser --cluster-password clusterPassword --max-hops 1 --port-offset 100 <span class="hljs-variable">${AMQ_HOME}</span>/instances/broker2
+
+Creating ActiveMQ Artemis instance at: /home/lab-user/workshop-amq/apache-artemis-2.28.0.redhat-00003/instances/broker2
+
+Auto tuning journal ...
+<span class="hljs-keyword">done</span>! Your system can make 1.44 writes per millisecond, your journal-buffer-timeout will be 696000
+
+You can now start the broker by executing:  
+
+   <span class="hljs-string">&quot;/home/lab-user/workshop-amq/apache-artemis-2.28.0.redhat-00003/instances/broker2/bin/artemis&quot;</span> run
+
+Or you can run the broker <span class="hljs-keyword">in</span> the background using:
+
+   <span class="hljs-string">&quot;/home/lab-user/workshop-amq/apache-artemis-2.28.0.redhat-00003/instances/broker2/bin/artemis-service&quot;</span> start
+</code></pre>
+<ol start="4">
+<li>
+<p>Start both brokers in each terminal/console</p>
+<blockquote>
+<p><em>Remember to allow traffic through the default ports. Check your firewall rules.</em></p>
+</blockquote>
+</li>
+</ol>
+<pre><code class="language-bash"><span class="hljs-comment"># Terminal for broker1</span>
+<span class="hljs-variable">${AMQ_HOME}</span>/instances/broker1/bin/artemis run
+
+<span class="hljs-comment"># Terminal for broker2</span>
+<span class="hljs-variable">${AMQ_HOME}</span>/instances/broker2/bin/artemis run
+</code></pre>
+<p>After some initial negotiation you should see each broker log that a bridge has been created</p>
+<pre><code class="language-sh">2024-03-26 01:52:47,271 INFO  [org.apache.activemq.artemis.core.server] AMQ221027: Bridge ClusterConnectionBridge@344864ad [name=$.artemis.internal.sf.my-cluster.11ea0f25-eb35-11ee-8198-525400316e36, queue=QueueImpl[name=$.artemis.internal.sf.my-cluster.11ea0f25-eb35-11ee-8198-525400316e36, postOffice=PostOfficeImpl [server=ActiveMQServerImpl::name=127.0.0.1], temp=<span class="hljs-literal">false</span>]@65e4bb2a targetConnector=ServerLocatorImpl (identity=(Cluster-connection-bridge::ClusterConnectionBridge@344864ad [name=$.artemis.internal.sf.my-cluster.11ea0f25-eb35-11ee-8198-525400316e36, queue=QueueImpl[name=$.artemis.internal.sf.my-cluster.11ea0f25-eb35-11ee-8198-525400316e36, postOffice=PostOfficeImpl [server=ActiveMQServerImpl::name=127.0.0.1], temp=<span class="hljs-literal">false</span>]@65e4bb2a targetConnector=ServerLocatorImpl [initialConnectors=[TransportConfiguration(name=artemis, factory=org-apache-activemq-artemis-core-remoting-impl-netty-NettyConnectorFactory) ?port=61716&amp;host=127-0-0-1], discoveryGroupConfiguration=null]]::ClusterConnectionImpl@918730310[nodeUUID=05b4c0f3-eb35-11ee-835a-525400316e36, connector=TransportConfiguration(name=artemis, factory=org-apache-activemq-artemis-core-remoting-impl-netty-NettyConnectorFactory) ?port=61616&amp;host=127-0-0-1, address=, server=ActiveMQServerImpl::name=127.0.0.1])) [initialConnectors=[TransportConfiguration(name=artemis, factory=org-apache-activemq-artemis-core-remoting-impl-netty-NettyConnectorFactory) ?port=61716&amp;host=127-0-0-1], discoveryGroupConfiguration=null]] is connected
+</code></pre>
+<ol start="5">
+<li>Press <code>CTRL-C</code> in both terminals and start the brokers as a service.</li>
+</ol>
+<pre><code class="language-bash"><span class="hljs-comment"># Terminal for broker1</span>
+<span class="hljs-variable">${AMQ_HOME}</span>/instances/broker1/bin/artemis-service start
+
+<span class="hljs-comment"># Terminal for broker2</span>
+<span class="hljs-variable">${AMQ_HOME}</span>/instances/broker2/bin/artemis-service start
+</code></pre>
+<h2 id="ocp-create-a-cluster-of-brokers">OCP Create a cluster of brokers</h2>
+<ol>
+<li>In the workstation machine create the <code>ActiveMQArtemis</code> instance with 2 replicas.</li>
+</ol>
+<pre><code class="language-bash"><span class="hljs-built_in">cat</span> &lt;&lt; <span class="hljs-string">EOF | oc replace -f -
+apiVersion: broker.amq.io/v1beta1
+kind: ActiveMQArtemis
+metadata:
+  name: ex-aao
+  application: ex-aao-app
+  namespace: amq-broker
+spec:
+  adminUser: admin
+  adminPassword: admin
+  console:
+    expose: true
+  deploymentPlan:
+    image: placeholder
+    jolokiaAgentEnabled: false
+    journalType: nio
+    managementRBACEnabled: true
+    messageMigration: false
+    persistenceEnabled: false
+    requireLogin: true
+    size: 2
+EOF</span>
+</code></pre>
+<ol start="2">
+<li>Validate the creation of the broker instance and validate the logs</li>
+</ol>
+<pre><code class="language-bash">oc get pods -n amq-broker
+NAME          READY   STATUS    RESTARTS   AGE
+ex-aao-ss-0   1/1     Running   0          27m
+ex-aao-ss-1   1/1     Running   0          28s
+
+oc logs ex-aao-ss-0
+2024-03-26 06:03:09,344 INFO  [org.apache.activemq.artemis.core.server] AMQ221027: Bridge ClusterConnectionBridge@5bc7274d [name=$.artemis.internal.sf.my-cluster.8394ea44-eb36-11ee-8073-0a580a840214, queue=QueueImpl[name=$.artemis.internal.sf.my-cluster.8394ea44-eb36-11ee-8073-0a580a840214, postOffice=PostOfficeImpl [server=ActiveMQServerImpl::name=amq-broker], temp=<span class="hljs-literal">false</span>]@17164286 targetConnector=ServerLocatorImpl (identity=(Cluster-connection-bridge::ClusterConnectionBridge@5bc7274d [name=$.artemis.internal.sf.my-cluster.8394ea44-eb36-11ee-8073-0a580a840214, queue=QueueImpl[name=$.artemis.internal.sf.my-cluster.8394ea44-eb36-11ee-8073-0a580a840214, postOffice=PostOfficeImpl [server=ActiveMQServerImpl::name=amq-broker], temp=<span class="hljs-literal">false</span>]@17164286 targetConnector=ServerLocatorImpl [initialConnectors=[TransportConfiguration(name=artemis, factory=org-apache-activemq-artemis-core-remoting-impl-netty-NettyConnectorFactory) ?port=61616&amp;host=ex-aao-ss-1-ex-aao-hdls-svc-amq-broker-svc-cluster-local], discoveryGroupConfiguration=null]]::ClusterConnectionImpl@736714033[nodeUUID=ad75934b-eb32-11ee-b192-0a580a84020c, connector=TransportConfiguration(name=artemis, factory=org-apache-activemq-artemis-core-remoting-impl-netty-NettyConnectorFactory) ?port=61616&amp;host=ex-aao-ss-0-ex-aao-hdls-svc-amq-broker-svc-cluster-local, address=, server=ActiveMQServerImpl::name=amq-broker])) [initialConnectors=[TransportConfiguration(name=artemis, factory=org-apache-activemq-artemis-core-remoting-impl-netty-NettyConnectorFactory) ?port=61616&amp;host=ex-aao-ss-1-ex-aao-hdls-svc-amq-broker-svc-cluster-local], discoveryGroupConfiguration=null]] is connected
+</code></pre>
+<p>End of Lab 7.</p>
+
+            <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+            
+        </body>
+        </html>

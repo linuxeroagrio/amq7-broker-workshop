@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Lab 3&period; Running a Broker Instance</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+            <h1 id="lab-3-running-a-broker-instance">Lab 3. Running a Broker Instance</h1>
+<h2 id="rhel-running-a-broker-instance">RHEL Running a Broker Instance</h2>
+<h3 id="run-the-broker-in-interactive-mode">Run the broker in interactive mode</h3>
+<ol>
+<li>Open a new terminal and login to the workstation machine with the following command</li>
+</ol>
+<pre><code class="language-bash">ssh lab-user@ssh.ocpv01.&lt;WORKSTATION_HOST_ID&gt;.infra.demo.redhat.com -p &lt;CUSTOM-SSH-PORT&gt; -L 8161:127.0.0.1:8161
+</code></pre>
+<blockquote>
+<p><strong>Note</strong>
+Use your own workstation host id and ssh ports provided by instructor.</p>
+</blockquote>
+<ol start="2">
+<li>Once the broker is created, navigate to the <code>mybroker</code> instance <code>bin</code> folder if not already there</li>
+</ol>
+<pre><code class="language-bash"><span class="hljs-built_in">export</span> AMQ_HOME=<span class="hljs-variable">$HOME</span>/workshop-amq/apache-artemis-2.28.0.redhat-00003
+<span class="hljs-built_in">cd</span> <span class="hljs-variable">${AMQ_HOME}</span>/instances/mybroker/bin
+</code></pre>
+<ol start="3">
+<li>Run the <code>artemis</code> script to start the broker in interactive mode</li>
+</ol>
+<pre><code class="language-bash">./artemis run
+</code></pre>
+<p>The broker will produce output similar to the following:</p>
+<pre><code class="language-bash">INFO  [org.apache.activemq.artemis] AMQ241001: HTTP Server started at http://localhost:8161
+INFO  [org.apache.activemq.artemis] AMQ241002: Artemis Jolokia REST API available at http://localhost:8161/console/jolokia
+INFO  [org.apache.activemq.artemis] AMQ241004: Artemis Console available at http://localhost:8161/console
+</code></pre>
+<h3 id="test-the-broker-with-the-cli">Test the broker with the CLI</h3>
+<ol>
+<li>In a new separated terminal, navigate to the bin folder of the broker instance.</li>
+</ol>
+<pre><code class="language-bash"><span class="hljs-built_in">export</span> AMQ_HOME=<span class="hljs-variable">$HOME</span>/workshop-amq/apache-artemis-2.28.0.redhat-00003
+<span class="hljs-built_in">cd</span> <span class="hljs-variable">${AMQ_HOME}</span>/instances/mybroker/bin
+</code></pre>
+<ol start="2">
+<li>Run the artemis command to consume from the default address</li>
+</ol>
+<pre><code class="language-bash">./artemis consumer
+</code></pre>
+<ol start="3">
+<li>In another terminal/console do the same but this time to produce messages to the same default address</li>
+</ol>
+<pre><code class="language-bash"><span class="hljs-built_in">export</span> AMQ_HOME=<span class="hljs-variable">$HOME</span>/workshop-amq/apache-artemis-2.28.0.redhat-00003
+<span class="hljs-built_in">cd</span> <span class="hljs-variable">${AMQ_HOME}</span>/instances/mybroker/bin
+./artemis producer
+</code></pre>
+<blockquote>
+<p><em>You will see the producer sending 1000 messages, and the same amount, received by the consumer.</em></p>
+</blockquote>
+<pre><code class="language-bash"><span class="hljs-comment">#Consumer Output</span>
+./artemis consumer
+
+Connection brokerURL = tcp://localhost:61616
+Consumer:: filter = null
+Consumer ActiveMQQueue[TEST], thread=0 <span class="hljs-built_in">wait</span> until 1000 messages are consumed
+Received 1000
+Consumer ActiveMQQueue[TEST], thread=0 Consumed: 1000 messages
+Consumer ActiveMQQueue[TEST], thread=0 Elapsed time <span class="hljs-keyword">in</span> second : 191 s
+Consumer ActiveMQQueue[TEST], thread=0 Elapsed time <span class="hljs-keyword">in</span> milli second : 191408 milli seconds
+Consumer ActiveMQQueue[TEST], thread=0 Consumed: 1000 messages
+Consumer ActiveMQQueue[TEST], thread=0 Consumer thread finished
+
+<span class="hljs-comment">#Producer Output</span>
+./artemis producer
+
+Connection brokerURL = tcp://localhost:61616
+Producer ActiveMQQueue[TEST], thread=0 Started to calculate elapsed time ...
+
+Producer ActiveMQQueue[TEST], thread=0 Produced: 1000 messages
+Producer ActiveMQQueue[TEST], thread=0 Elapsed time <span class="hljs-keyword">in</span> second : 5 s
+Producer ActiveMQQueue[TEST], thread=0 Elapsed time <span class="hljs-keyword">in</span> milli second : 5947 milli seconds
+</code></pre>
+<ol start="4">
+<li>Close the producer and consumer terminals</li>
+</ol>
+<h3 id="management-console">Management console</h3>
+<ol>
+<li>
+<p>To access the management web console, open a browser and goto <a href="http://localhost:8161">http://localhost:8161</a></p>
+</li>
+<li>
+<p>Log in to the console using the username/password entered when the AMQ 7 instance was created.</p>
+<blockquote>
+<p>In this case is <code>admin</code>/<code>admin</code></p>
+</blockquote>
+</li>
+<li>
+<p>Navigate on console and explore the diferents views.</p>
+</li>
+</ol>
+<h3 id="running-as-a-service">Running as a Service</h3>
+<ol>
+<li>
+<p>Shutdown the running instance by pressing <code>CTRL+C</code>.</p>
+</li>
+<li>
+<p>Start the instance in service mode</p>
+</li>
+</ol>
+<pre><code class="language-bash">./artemis-service start
+Starting artemis-service
+artemis-service is now running (2656)
+</code></pre>
+<ol start="3">
+<li>Validate the process id.</li>
+</ol>
+<pre><code class="language-bash">ps -fea | grep -i artemis
+
+lab-user    2656       1 16 23:24 pts/0    00:00:07 java -XX:AutoBoxCacheMax=20000 -XX:+PrintClassHistogram -XX:+UseG1GC -XX:+UseStringDeduplication -Xms512M -Xmx2G -Dhawtio.disableProxy=<span class="hljs-literal">true</span> -Dhawtio.realm=activemq -Dhawtio.offline=<span class="hljs-literal">true</span> -Dhawtio.rolePrincipalClasses=org.apache.activemq.artemis.spi.core.security.jaas.RolePrincipal -Dhawtio.http.strictTransportSecurity=max-age=31536000;includeSubDomains;preload -Djolokia.policyLocation=file:/home/lab-user/workshop-amq/apache-artemis-2.28.0.redhat-00003/instances/mybroker/etc/jolokia-access.xml -Dhawtio.role=amq -Djava.security.auth.login.config=/home/lab-user/workshop-amq/apache-artemis-2.28.0.redhat-00003/instances/mybroker/etc/login.config -classpath /home/lab-user/workshop-amq/apache-artemis-2.28.0.redhat-00003/lib/artemis-boot.jar -Dartemis.home=/home/lab-user/workshop-amq/apache-artemis-2.28.0.redhat-00003 -Dartemis.instance=/home/lab-user/workshop-amq/apache-artemis-2.28.0.redhat-00003/instances/mybroker -Djava.library.path=/home/lab-user/workshop-amq/apache-artemis-2.28.0.redhat-00003/bin/lib/linux-x86_64 -Djava.io.tmpdir=/home/lab-user/workshop-amq/apache-artemis-2.28.0.redhat-00003/instances/mybroker/tmp -Ddata.<span class="hljs-built_in">dir</span>=/home/lab-user/workshop-amq/apache-artemis-2.28.0.redhat-00003/instances/mybroker/data -Dartemis.instance.etc=/home/lab-user/workshop-amq/apache-artemis-2.28.0.redhat-00003/instances/mybroker/etc org.apache.activemq.artemis.boot.Artemis run
+</code></pre>
+<ol start="4">
+<li>Stop the instace and start it again</li>
+</ol>
+<pre><code class="language-bash">./artemis-service stop
+Gracefully Stopping artemis-service
+</code></pre>
+<pre><code class="language-bash">./artemis-service start
+Starting artemis-service
+artemis-service is now running (2656)
+</code></pre>
+<h2 id="ocp-running-a-broker-instance">OCP Running a Broker Instance</h2>
+<h3 id="run-a-simple-broker-instance">Run a simple broker instance</h3>
+<ol>
+<li>Create the the <code>ActiveMQArtemis</code> instance</li>
+</ol>
+<pre><code class="language-bash"><span class="hljs-built_in">cat</span> &lt;&lt; <span class="hljs-string">EOF | oc replace -f -
+apiVersion: broker.amq.io/v1beta1
+kind: ActiveMQArtemis
+metadata:
+  name: ex-aao
+  application: ex-aao-app
+  namespace: amq-broker
+spec:
+  adminUser: admin
+  adminPassword: admin
+  console:
+    expose: true
+  deploymentPlan:
+    image: placeholder
+    jolokiaAgentEnabled: false
+    journalType: nio
+    managementRBACEnabled: true
+    messageMigration: false
+    persistenceEnabled: false
+    requireLogin: true
+    size: 1
+EOF</span>
+</code></pre>
+<ol start="2">
+<li>Validate the creation of the broker instance and validate the logs</li>
+</ol>
+<pre><code class="language-bash">oc get pods -n amq-broker
+NAME          READY   STATUS    RESTARTS   AGE
+ex-aao-ss-0   1/1     Running   0          2m7s
+
+oc logs ex-aao-ss-0
+2024-03-26 03:34:38,517 INFO  [org.apache.activemq.artemis] AMQ241001: HTTP Server started at http://ex-aao-ss-0.ex-aao-hdls-svc.amq-broker.svc.cluster.local:8161
+2024-03-26 03:34:38,518 INFO  [org.apache.activemq.artemis] AMQ241002: Artemis Jolokia REST API available at http://ex-aao-ss-0.ex-aao-hdls-svc.amq-broker.svc.cluster.local:8161/console/jolokia
+2024-03-26 03:34:38,518 INFO  [org.apache.activemq.artemis] AMQ241004: Artemis Console available at http://ex-aao-ss-0.ex-aao-hdls-svc.amq-broker.svc.cluster.local:8161/console
+</code></pre>
+<h3 id="test-the-broker-with-the-cli-1">Test the broker with the CLI</h3>
+<ol start="3">
+<li>Run the artemis command to consume from the default address</li>
+</ol>
+<pre><code class="language-bash">oc <span class="hljs-built_in">exec</span> -ti ex-aao-ss-0 -c ex-aao-container -n amq-broker -- amq-broker/bin/artemis consumer --url tcp://ex-aao-ss-0.ex-aao-hdls-svc.amq-broker.svc.cluster.local:61616 --user admin --password admin
+</code></pre>
+<ol start="4">
+<li>In another terminal/console do the same but this time to produce messages to the same default address</li>
+</ol>
+<pre><code class="language-bash">oc <span class="hljs-built_in">exec</span> -ti ex-aao-ss-0 -c ex-aao-container -n amq-broker -- amq-broker/bin/artemis producer --url tcp://ex-aao-ss-0.ex-aao-hdls-svc.amq-broker.svc.cluster.local:61616 --user admin --password admin
+</code></pre>
+<blockquote>
+<p><em>You will see the producer sending 1000 messages, and the same amount, received by the consumer.</em></p>
+</blockquote>
+<pre><code class="language-bash"><span class="hljs-comment">#Consumer Output</span>
+oc <span class="hljs-built_in">exec</span> -ti ex-aao-ss-0 -c ex-aao-container -n amq-broker -- amq-broker/bin/artemis consumer --url tcp://ex-aao-ss-0.ex-aao-hdls-svc.amq-broker.svc.cluster.local:61616 --user admin --password admin
+
+Connection brokerURL = tcp://ex-aao-ss-0.ex-aao-hdls-svc.amq-broker.svc.cluster.local:61616
+Consumer:: filter = null
+Consumer ActiveMQQueue[TEST], thread=0 <span class="hljs-built_in">wait</span> until 1000 messages are consumed
+Received 1000
+Consumer ActiveMQQueue[TEST], thread=0 Consumed: 1000 messages
+Consumer ActiveMQQueue[TEST], thread=0 Elapsed time <span class="hljs-keyword">in</span> second : 89 s
+Consumer ActiveMQQueue[TEST], thread=0 Elapsed time <span class="hljs-keyword">in</span> milli second : 89621 milli seconds
+Consumer ActiveMQQueue[TEST], thread=0 Consumed: 1000 messages
+Consumer ActiveMQQueue[TEST], thread=0 Consumer thread finished
+
+<span class="hljs-comment">#Producer Output</span>
+oc <span class="hljs-built_in">exec</span> -ti ex-aao-ss-0 -c ex-aao-container -n amq-broker -- amq-broker/bin/artemis producer --url tcp://ex-aao-ss-0.ex-aao-hdls-svc.amq-broker.svc.cluster.local:61616 --user admin --password admin
+
+Connection brokerURL = tcp://ex-aao-ss-0.ex-aao-hdls-svc.amq-broker.svc.cluster.local:61616
+Producer ActiveMQQueue[TEST], thread=0 Started to calculate elapsed time ...
+
+Producer ActiveMQQueue[TEST], thread=0 Produced: 1000 messages
+Producer ActiveMQQueue[TEST], thread=0 Elapsed time <span class="hljs-keyword">in</span> second : 4 s
+Producer ActiveMQQueue[TEST], thread=0 Elapsed time <span class="hljs-keyword">in</span> milli second : 4157 milli seconds
+</code></pre>
+<ol start="5">
+<li>Close the addditional terminals</li>
+</ol>
+<h3 id="management-console-1">Management console</h3>
+<ol>
+<li>To access the management web console, get the address of the console route and open it in a browser</li>
+</ol>
+<pre><code class="language-bash">oc get route ex-aao-wconsj-0-svc-rte -n amq-broker -o jsonpath=<span class="hljs-string">&#x27;{&quot;http://&quot;}{.spec.host}{&quot;\n&quot;}&#x27;</span>
+</code></pre>
+<ol start="2">
+<li>
+<p>Log in to the console using the username/password entered when the AMQ 7 instance was created.</p>
+<blockquote>
+<p>In this case is <code>admin</code>/<code>admin</code></p>
+</blockquote>
+</li>
+<li>
+<p>Navigate on console and explore the diferents views.</p>
+</li>
+</ol>
+<p>End of Lab 3.</p>
+
+            <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+            
+        </body>
+        </html>

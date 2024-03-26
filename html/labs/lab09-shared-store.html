@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Lab 9&period; Shared Store</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+            <h1 id="lab-9-shared-store">Lab 9. Shared Store</h1>
+<h2 id="create-a-high-available-broker-with-a-shared-store-using-the-cli">Create a high available broker with a shared store using the CLI</h2>
+<ol>
+<li>In Workstation machine, stop the <code>broker1</code> and <code>broker2</code> brokers</li>
+</ol>
+<pre><code class="language-bash"><span class="hljs-built_in">export</span> AMQ_HOME=<span class="hljs-variable">$HOME</span>/workshop-amq/apache-artemis-2.28.0.redhat-00003
+<span class="hljs-variable">${AMQ_HOME}</span>/instances/broker1/bin/artemis-service stop
+
+Gracefully Stopping artemis-service
+
+<span class="hljs-variable">${AMQ_HOME}</span>/instances/broker2/bin/artemis-service stop
+
+Gracefully Stopping artemis-service
+</code></pre>
+<ol start="2">
+<li>Open a new terminal and create a live <code>libeBroker</code> broker</li>
+</ol>
+<pre><code class="language-bash"><span class="hljs-built_in">export</span> AMQ_HOME=<span class="hljs-variable">$HOME</span>/workshop-amq/apache-artemis-2.28.0.redhat-00003
+<span class="hljs-variable">${AMQ_HOME}</span>/bin/artemis create --shared-store --failover-on-shutdown --data <span class="hljs-variable">${AMQ_HOME}</span>/instances/liveBroker/data --user admin --password password --role admin --allow-anonymous y --clustered --host 127.0.0.1 --cluster-user clusterUser --cluster-password clusterPassword --max-hops 1 <span class="hljs-variable">${AMQ_HOME}</span>/instances/liveBroker
+
+Creating ActiveMQ Artemis instance at: /home/lab-user/workshop-amq/apache-artemis-2.28.0.redhat-00003/instances/liveBroker
+
+Auto tuning journal ...
+<span class="hljs-keyword">done</span>! Your system can make 1.25 writes per millisecond, your journal-buffer-timeout will be 800000
+
+You can now start the broker by executing:  
+
+   <span class="hljs-string">&quot;/home/lab-user/workshop-amq/apache-artemis-2.28.0.redhat-00003/instances/liveBroker/bin/artemis&quot;</span> run
+
+Or you can run the broker <span class="hljs-keyword">in</span> the background using:
+
+   <span class="hljs-string">&quot;/home/lab-user/workshop-amq/apache-artemis-2.28.0.redhat-00003/instances/liveBroker/bin/artemis-service&quot;</span> start
+</code></pre>
+<ol start="3">
+<li>In a new terminal create backup <code>backupBroker</code> broker</li>
+</ol>
+<pre><code class="language-bash"><span class="hljs-built_in">export</span> AMQ_HOME=<span class="hljs-variable">$HOME</span>/workshop-amq/apache-artemis-2.28.0.redhat-00003
+<span class="hljs-variable">${AMQ_HOME}</span>/bin/artemis create --shared-store --failover-on-shutdown --slave --data <span class="hljs-variable">${AMQ_HOME}</span>/instances/liveBroker/data --user admin --password password --role admin --allow-anonymous y --clustered --host 127.0.0.1 --cluster-user clusterUser --cluster-password clusterPassword --max-hops 1 --port-offset 100 <span class="hljs-variable">${AMQ_HOME}</span>/instances/backupBroker
+
+Creating ActiveMQ Artemis instance at: /home/lab-user/workshop-amq/apache-artemis-2.28.0.redhat-00003/instances/backupBroker
+
+Auto tuning journal ...
+<span class="hljs-keyword">done</span>! Your system can make 1.35 writes per millisecond, your journal-buffer-timeout will be 740000
+
+You can now start the broker by executing:  
+
+   <span class="hljs-string">&quot;/home/lab-user/workshop-amq/apache-artemis-2.28.0.redhat-00003/instances/backupBroker/bin/artemis&quot;</span> run
+
+Or you can run the broker <span class="hljs-keyword">in</span> the background using:
+
+   <span class="hljs-string">&quot;/home/lab-user/workshop-amq/apache-artemis-2.28.0.redhat-00003/instances/backupBroker/bin/artemis-service&quot;</span> start
+</code></pre>
+<ol start="4">
+<li>Add an <code>anycast</code> queue configuration to both brokers.</li>
+</ol>
+<pre><code class="language-bash"><span class="hljs-comment"># For liveBroker terminal</span>
+<span class="hljs-built_in">export</span> AMQ_HOME=<span class="hljs-variable">$HOME</span>/workshop-amq/apache-artemis-2.28.0.redhat-00003
+vim <span class="hljs-variable">${AMQ_HOME}</span>/instances/liveBroker/etc/broker.xml
+
+<span class="hljs-comment"># For backupBroker terminal</span>
+<span class="hljs-built_in">export</span> AMQ_HOME=<span class="hljs-variable">$HOME</span>/workshop-amq/apache-artemis-2.28.0.redhat-00003
+vim <span class="hljs-variable">${AMQ_HOME}</span>/instances/backupBroker/etc/broker.xml
+</code></pre>
+<pre><code class="language-XML"><span class="hljs-tag">&lt;<span class="hljs-name">addresses</span>&gt;</span>
+...
+...
+...
+  <span class="hljs-tag">&lt;<span class="hljs-name">address</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;clusteredQueue&quot;</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">anycast</span>&gt;</span>
+           <span class="hljs-tag">&lt;<span class="hljs-name">queue</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;clusteredQueue&quot;</span>/&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">anycast</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">address</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">addresses</span>&gt;</span>
+</code></pre>
+<ol start="5">
+<li>Start the brokers, first the <code>liveBroker</code>, then the <code>backupBroker</code>.</li>
+</ol>
+<pre><code class="language-bash"><span class="hljs-comment"># Terminal for broker1</span>
+<span class="hljs-variable">${AMQ_HOME}</span>/instances/liveBroker/bin/artemis run
+
+<span class="hljs-comment"># Terminal for broker2</span>
+<span class="hljs-variable">${AMQ_HOME}</span>/instances/backupBroker/bin/artemis run
+</code></pre>
+<blockquote>
+<p><em>You should see the backup broker announce itself as a <strong>backup</strong> in the logs.</em></p>
+</blockquote>
+<pre><code class="language-bash">2024-03-26 02:50:32,801 INFO  [org.apache.activemq.artemis.core.server] AMQ221031: backup announced
+</code></pre>
+<ol start="6">
+<li>
+<p>Terminate the <code>liveBroker</code> by pressing <code>CTRL+C</code></p>
+<blockquote>
+<p><em>The <code>backupBroker</code> should start as live</em></p>
+</blockquote>
+</li>
+</ol>
+<pre><code class="language-bash">2024-03-26 02:52:22,182 INFO  [org.apache.activemq.artemis.core.server] AMQ221010: Backup Server is now live
+</code></pre>
+<ol start="7">
+<li>Restart the <code>liveBroker</code></li>
+</ol>
+<pre><code class="language-bash"><span class="hljs-comment"># Terminal for broker1</span>
+<span class="hljs-variable">${AMQ_HOME}</span>/instances/liveBroker/bin/artemis run
+</code></pre>
+<blockquote>
+<p><em>The <code>backupBroker</code> will automatically shutdown  and the <code>liveBroker</code> restart</em></p>
+</blockquote>
+<pre><code class="language-bash">2024-03-26 02:53:27,323 INFO  [org.apache.activemq.artemis.core.server] AMQ221008: live server wants to restart, restarting server <span class="hljs-keyword">in</span> backup
+</code></pre>
+<ol start="8">
+<li>Press <code>CTRL+C</code> in booth terminals.</li>
+</ol>
+<p>End of Lab 9.</p>
+
+            <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+            
+        </body>
+        </html>

@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Lab 5&period; Configuring a Topic</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+            <h1 id="lab-5-configuring-a-topic">Lab 5. Configuring a Topic</h1>
+<h2 id="rhel-creating-a-topic-using-the-cli">RHEL Creating a Topic using the CLI</h2>
+<ol>
+<li>In the workstation machine, open the <code>${AMQ_HOME}/etc/broker.xml</code> file with your favorite text editor.</li>
+</ol>
+<pre><code class="language-bash"><span class="hljs-built_in">export</span> AMQ_HOME=<span class="hljs-variable">$HOME</span>/workshop-amq/apache-artemis-2.28.0.redhat-00003
+vim <span class="hljs-variable">${AMQ_HOME}</span>/instances/mybroker/etc/broker.xml
+</code></pre>
+<ol start="2">
+<li>Locate the <code>&lt;addresses&gt;&lt;/addresses&gt;</code> section and add an <code>multicast</code> type address with a topic.</li>
+</ol>
+<pre><code class="language-XML"><span class="hljs-tag">&lt;<span class="hljs-name">addresses</span>&gt;</span>
+...
+...
+...
+   <span class="hljs-tag">&lt;<span class="hljs-name">address</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;testTopic&quot;</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">multicast</span>&gt;</span>
+         <span class="hljs-tag">&lt;<span class="hljs-name">queue</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;testTopic&quot;</span>/&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-name">multicast</span>&gt;</span>
+   <span class="hljs-tag">&lt;/<span class="hljs-name">address</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">addresses</span>&gt;</span>
+</code></pre>
+<ol start="3">
+<li>Start the broker or restart in case it’s already running.</li>
+</ol>
+<pre><code class="language-bash"><span class="hljs-variable">${AMQ_HOME}</span>/instances/mybroker/bin/artemis-service restart
+Restarting artemis-service
+artemis-service is now running (4050)
+</code></pre>
+<ol start="4">
+<li>Test the new created queue using running the following command in two (2) diferent terminal consoles</li>
+</ol>
+<pre><code class="language-bash"><span class="hljs-built_in">export</span> AMQ_HOME=<span class="hljs-variable">$HOME</span>/workshop-amq/apache-artemis-2.28.0.redhat-00003
+<span class="hljs-variable">${AMQ_HOME}</span>/instances/mybroker/bin/artemis consumer --destination topic://testTopic --message-count 10
+</code></pre>
+<ol start="5">
+<li>Run the producer in a third terminal/console</li>
+</ol>
+<pre><code class="language-bash"><span class="hljs-built_in">export</span> AMQ_HOME=<span class="hljs-variable">$HOME</span>/workshop-amq/apache-artemis-2.28.0.redhat-00003
+<span class="hljs-variable">${AMQ_HOME}</span>/instances/mybroker/bin/artemis producer --destination topic://testTopic --message-count 10
+</code></pre>
+<pre><code class="language-bash"><span class="hljs-comment">#Consumer Output</span>
+<span class="hljs-variable">${AMQ_HOME}</span>/instances/mybroker/bin/artemis consumer --destination topic://testTopic --message-count 10
+
+Connection brokerURL = tcp://localhost:61616
+Consumer:: filter = null
+Consumer ActiveMQTopic[testTopic], thread=0 <span class="hljs-built_in">wait</span> until 10 messages are consumed
+Consumer ActiveMQTopic[testTopic], thread=0 Consumed: 10 messages
+Consumer ActiveMQTopic[testTopic], thread=0 Elapsed time <span class="hljs-keyword">in</span> second : 52 s
+Consumer ActiveMQTopic[testTopic], thread=0 Elapsed time <span class="hljs-keyword">in</span> milli second : 52389 milli seconds
+Consumer ActiveMQTopic[testTopic], thread=0 Consumed: 10 messages
+Consumer ActiveMQTopic[testTopic], thread=0 Consumer thread finished
+
+<span class="hljs-comment">#Producer Output</span>
+<span class="hljs-variable">${AMQ_HOME}</span>/instances/mybroker/bin/artemis producer --destination topic://testTopic --message-count 10
+
+Connection brokerURL = tcp://localhost:61616
+Producer ActiveMQTopic[testTopic], thread=0 Started to calculate elapsed time ...
+
+Producer ActiveMQTopic[testTopic], thread=0 Produced: 10 messages
+Producer ActiveMQTopic[testTopic], thread=0 Elapsed time <span class="hljs-keyword">in</span> second : 0 s
+Producer ActiveMQTopic[testTopic], thread=0 Elapsed time <span class="hljs-keyword">in</span> milli second : 97 milli seconds
+</code></pre>
+<ol start="6">
+<li>Exit from the consumer and producer terminal sessions.</li>
+</ol>
+<h2 id="ocp-creating-a-topic">OCP Creating a Topic</h2>
+<ol>
+<li>In the workstation machine, create an <code>ActiveMQArtemisAddress</code> resource</li>
+</ol>
+<pre><code class="language-bash"><span class="hljs-built_in">cat</span> &lt;&lt; <span class="hljs-string">EOF | oc apply -f -
+kind: ActiveMQArtemisAddress
+apiVersion: broker.amq.io/v1beta1
+metadata:
+  name: testtopic-address
+  namespace: amq-broker
+spec:
+  addressName: testTopic
+  queueName: testTopic
+  routingType: multicast
+EOF</span>
+
+oc get ActiveMQArtemisAddress testtopic-address -n amq-broker
+
+NAME                AGE
+testtopic-address   6s
+</code></pre>
+<ol start="2">
+<li>Run the artemis command to consume from address</li>
+</ol>
+<pre><code class="language-bash">oc <span class="hljs-built_in">exec</span> -ti ex-aao-ss-0 -c ex-aao-container -n amq-broker -- amq-broker/bin/artemis consumer --url tcp://ex-aao-ss-0.ex-aao-hdls-svc.amq-broker.svc.cluster.local:61616 --user admin --password admin --destination topic://testTopic --message-count 10
+</code></pre>
+<ol start="3">
+<li>In another terminal/console do the same but this time to produce messages to the same address</li>
+</ol>
+<pre><code class="language-bash">oc <span class="hljs-built_in">exec</span> -ti ex-aao-ss-0 -c ex-aao-container -n amq-broker -- amq-broker/bin/artemis producer --url tcp://ex-aao-ss-0.ex-aao-hdls-svc.amq-broker.svc.cluster.local:61616 --user admin --password admin --destination topic://testTopic --message-count 10
+</code></pre>
+<pre><code class="language-bash"><span class="hljs-comment">#Consumer Output</span>
+oc <span class="hljs-built_in">exec</span> -ti ex-aao-ss-0 -c ex-aao-container -n amq-broker -- amq-broker/bin/artemis consumer --url tcp://ex-aao-ss-0.ex-aao-hdls-svc.amq-broker.svc.cluster.local:61616 --user admin --password admin --destination topic://testTopic --message-count 10
+
+Connection brokerURL = tcp://ex-aao-ss-0.ex-aao-hdls-svc.amq-broker.svc.cluster.local:61616
+Consumer:: filter = null
+Consumer ActiveMQTopic[testTopic], thread=0 <span class="hljs-built_in">wait</span> until 10 messages are consumed
+Consumer ActiveMQTopic[testTopic], thread=0 Consumed: 10 messages
+Consumer ActiveMQTopic[testTopic], thread=0 Elapsed time <span class="hljs-keyword">in</span> second : 10 s
+Consumer ActiveMQTopic[testTopic], thread=0 Elapsed time <span class="hljs-keyword">in</span> milli second : 10734 milli seconds
+Consumer ActiveMQTopic[testTopic], thread=0 Consumed: 10 messages
+Consumer ActiveMQTopic[testTopic], thread=0 Consumer thread finished
+
+<span class="hljs-comment">#Producer Output</span>
+oc <span class="hljs-built_in">exec</span> -ti ex-aao-ss-0 -c ex-aao-container -n amq-broker -- amq-broker/bin/artemis producer --url tcp://ex-aao-ss-0.ex-aao-hdls-svc.amq-broker.svc.cluster.local:61616 --user admin --password admin --destination topic://testTopic --message-count 10
+Connection brokerURL = tcp://ex-aao-ss-0.ex-aao-hdls-svc.amq-broker.svc.cluster.local:61616
+Producer ActiveMQTopic[testTopic], thread=0 Started to calculate elapsed time ...
+
+Producer ActiveMQTopic[testTopic], thread=0 Produced: 10 messages
+Producer ActiveMQTopic[testTopic], thread=0 Elapsed time <span class="hljs-keyword">in</span> second : 0 s
+Producer ActiveMQTopic[testTopic], thread=0 Elapsed time <span class="hljs-keyword">in</span> milli second : 47 milli seconds
+</code></pre>
+<ol start="4">
+<li>Close the addditional terminals</li>
+</ol>
+<p>End of Lab 5.</p>
+
+            <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+            
+        </body>
+        </html>

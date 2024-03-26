@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Lab 8&period; Clustered Queue</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+            <h1 id="lab-8-clustered-queue">Lab 8. Clustered Queue</h1>
+<h2 id="rhel-create-a-clustered-queue">RHEL Create a clustered queue</h2>
+<p>To have a clustered queue it must be defined in both brokers.</p>
+<ol>
+<li>Open two terminals and add an anycast queue configuration to both brokers.</li>
+</ol>
+<pre><code class="language-bash"><span class="hljs-comment"># For broker1 terminal</span>
+<span class="hljs-built_in">export</span> AMQ_HOME=<span class="hljs-variable">$HOME</span>/workshop-amq/apache-artemis-2.28.0.redhat-00003
+vim <span class="hljs-variable">${AMQ_HOME}</span>/instances/broker1/etc/broker.xml
+
+<span class="hljs-comment"># For broker2 terminal</span>
+<span class="hljs-built_in">export</span> AMQ_HOME=<span class="hljs-variable">$HOME</span>/workshop-amq/apache-artemis-2.28.0.redhat-00003
+vim <span class="hljs-variable">${AMQ_HOME}</span>/instances/broker2/etc/broker.xml
+</code></pre>
+<pre><code class="language-XML"><span class="hljs-tag">&lt;<span class="hljs-name">addresses</span>&gt;</span>
+...
+...
+...
+   <span class="hljs-tag">&lt;<span class="hljs-name">address</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;clusteredQueue&quot;</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">anycast</span>&gt;</span>
+         <span class="hljs-tag">&lt;<span class="hljs-name">queue</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;clusteredQueue&quot;</span>/&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-name">anycast</span>&gt;</span>
+   <span class="hljs-tag">&lt;/<span class="hljs-name">address</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">addresses</span>&gt;</span>
+</code></pre>
+<ol start="2">
+<li>Restart the brokers</li>
+</ol>
+<pre><code class="language-bash"><span class="hljs-comment"># For broker1 terminal</span>
+<span class="hljs-variable">${AMQ_HOME}</span>/instances/broker1/bin/artemis-service restart
+Restarting artemis-service
+artemis-service is now running (6031)
+
+<span class="hljs-comment"># For broker2 terminal</span>
+<span class="hljs-variable">${AMQ_HOME}</span>/instances/broker2/bin/artemis-service restart
+Restarting artemis-service
+artemis-service is now running (6186)
+</code></pre>
+<h2 id="run-a-consumer-connected-to-each-broker">Run a consumer connected to each broker</h2>
+<ol>
+<li>In <code>broker1</code> terminal</li>
+</ol>
+<pre><code class="language-bash"><span class="hljs-variable">${AMQ_HOME}</span>/instances/broker1/bin/artemis consumer --message-count 5 --destination queue://clusteredQueue
+</code></pre>
+<ol start="2">
+<li>In <code>broker2</code> terminal</li>
+</ol>
+<pre><code class="language-bash"><span class="hljs-variable">${AMQ_HOME}</span>/instances/broker2/bin/artemis consumer --message-count 5 --url tcp://localhost:61716 --destination queue://clusteredQueue
+</code></pre>
+<ol start="3">
+<li>Now in a third terminal run the producer connected to <code>broker1</code> and send 10 messages</li>
+</ol>
+<pre><code class="language-bash"><span class="hljs-built_in">export</span> AMQ_HOME=<span class="hljs-variable">$HOME</span>/workshop-amq/apache-artemis-2.28.0.redhat-00003
+<span class="hljs-variable">${AMQ_HOME}</span>/instances/broker1/bin/artemis producer --message-count 10 --destination queue://clusteredQueue
+</code></pre>
+<blockquote>
+<p><em>You will see each consumer receives 5 messages in a round robin fashion</em></p>
+</blockquote>
+<pre><code class="language-bash"><span class="hljs-variable">${AMQ_HOME}</span>/instances/broker1/bin/artemis consumer --message-count 5 --destination queue://clusteredQueue
+Connection brokerURL = tcp://127.0.0.1:61616
+Consumer:: filter = null
+Consumer ActiveMQQueue[clusteredQueue], thread=0 <span class="hljs-built_in">wait</span> until 5 messages are consumed
+Consumer ActiveMQQueue[clusteredQueue], thread=0 Consumed: 5 messages
+Consumer ActiveMQQueue[clusteredQueue], thread=0 Elapsed time <span class="hljs-keyword">in</span> second : 120 s
+Consumer ActiveMQQueue[clusteredQueue], thread=0 Elapsed time <span class="hljs-keyword">in</span> milli second : 120669 milli seconds
+Consumer ActiveMQQueue[clusteredQueue], thread=0 Consumed: 5 messages
+Consumer ActiveMQQueue[clusteredQueue], thread=0 Consumer thread finished
+
+<span class="hljs-variable">${AMQ_HOME}</span>/instances/broker2/bin/artemis-service start
+Starting artemis-service
+artemis-service is now running (5807)
+[lab-user@bastion ~]$ <span class="hljs-variable">${AMQ_HOME}</span>/instances/broker2/bin/artemis consumer --message-count 5 --url tcp://localhost:61716 --destination queue://clusteredQueue
+Connection brokerURL = tcp://localhost:61716
+Consumer:: filter = null
+Consumer ActiveMQQueue[clusteredQueue], thread=0 <span class="hljs-built_in">wait</span> until 5 messages are consumed
+Consumer ActiveMQQueue[clusteredQueue], thread=0 Consumed: 5 messages
+Consumer ActiveMQQueue[clusteredQueue], thread=0 Elapsed time <span class="hljs-keyword">in</span> second : 110 s
+Consumer ActiveMQQueue[clusteredQueue], thread=0 Elapsed time <span class="hljs-keyword">in</span> milli second : 110022 milli seconds
+Consumer ActiveMQQueue[clusteredQueue], thread=0 Consumed: 5 messages
+Consumer ActiveMQQueue[clusteredQueue], thread=0 Consumer thread finished
+
+<span class="hljs-variable">${AMQ_HOME}</span>/instances/broker1/bin/artemis producer --message-count 10 --destination queue://clusteredQueue
+Connection brokerURL = tcp://127.0.0.1:61616
+Producer ActiveMQQueue[clusteredQueue], thread=0 Started to calculate elapsed time ...
+
+Producer ActiveMQQueue[clusteredQueue], thread=0 Produced: 10 messages
+Producer ActiveMQQueue[clusteredQueue], thread=0 Elapsed time <span class="hljs-keyword">in</span> second : 0 s
+Producer ActiveMQQueue[clusteredQueue], thread=0 Elapsed time <span class="hljs-keyword">in</span> milli second : 99 milli seconds
+</code></pre>
+<h2 id="run-a-disconnected-consumer">Run a disconnected consumer</h2>
+<ol>
+<li>Run the broker2 consumer first</li>
+</ol>
+<pre><code class="language-bash"><span class="hljs-variable">${AMQ_HOME}</span>/instances/broker2/bin/artemis consumer --message-count 10 --url tcp://localhost:61716 --destination queue://clusteredQueue
+</code></pre>
+<ol start="2">
+<li>Now run the producer again</li>
+</ol>
+<pre><code class="language-bash"><span class="hljs-variable">${AMQ_HOME}</span>/instances/broker1/bin/artemis producer --message-count 10 --destination queue://clusteredQueue
+</code></pre>
+<ol start="3">
+<li>Run the broker1 consumer next</li>
+</ol>
+<pre><code class="language-bash"><span class="hljs-variable">${AMQ_HOME}</span>/instances/broker1/bin/artemis consumer --message-count 5 --destination queue://clusteredQueue
+</code></pre>
+<blockquote>
+<p><em>You will see that only 1 consumer received the messages as they were load balanced on demand</em></p>
+</blockquote>
+<p>Press <code>CTRL+C</code>in the three terminals</p>
+<h2 id="message-load-balancing-strategy">Message load balancing strategy</h2>
+<ol>
+<li>Open two terminals and update the load balancing to strict in the <code>etc/broker.xml</code> file for both brokers.</li>
+</ol>
+<pre><code class="language-bash"><span class="hljs-comment"># For broker1 terminal</span>
+vim <span class="hljs-variable">${AMQ_HOME}</span>/instances/broker1/etc/broker.xml
+
+<span class="hljs-comment"># For broker2 terminal</span>
+vim <span class="hljs-variable">${AMQ_HOME}</span>/instances/broker2/etc/broker.xml
+</code></pre>
+<pre><code class="language-XML"><span class="hljs-tag">&lt;<span class="hljs-name">cluster-connections</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">cluster-connection</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;my-cluster&quot;</span>&gt;</span>
+         <span class="hljs-tag">&lt;<span class="hljs-name">connector-ref</span>&gt;</span>artemis<span class="hljs-tag">&lt;/<span class="hljs-name">connector-ref</span>&gt;</span>
+         <span class="hljs-tag">&lt;<span class="hljs-name">message-load-balancing</span>&gt;</span>STRICT<span class="hljs-tag">&lt;/<span class="hljs-name">message-load-balancing</span>&gt;</span>
+         <span class="hljs-tag">&lt;<span class="hljs-name">max-hops</span>&gt;</span>1<span class="hljs-tag">&lt;/<span class="hljs-name">max-hops</span>&gt;</span>
+         <span class="hljs-tag">&lt;<span class="hljs-name">discovery-group-ref</span> <span class="hljs-attr">discovery-group-name</span>=<span class="hljs-string">&quot;dg-group1&quot;</span>/&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-name">cluster-connection</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">cluster-connections</span>&gt;</span>
+</code></pre>
+<ol start="2">
+<li>Restart the brokers and run again the previous exercise</li>
+</ol>
+<pre><code class="language-bash"><span class="hljs-comment"># For broker1 terminal</span>
+<span class="hljs-variable">${AMQ_HOME}</span>/instances/broker1/bin/artemis-service restart
+Restarting artemis-service
+artemis-service is now running (6031)
+
+<span class="hljs-comment"># For broker2 terminal</span>
+<span class="hljs-variable">${AMQ_HOME}</span>/instances/broker2/bin/artemis-service restart
+Restarting artemis-service
+artemis-service is now running (6186)
+</code></pre>
+<blockquote>
+<p><em>You will notice that both the consumers receive messages even when disconnected</em></p>
+</blockquote>
+<p>End of Lab 8.</p>
+
+            <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+            
+        </body>
+        </html>
