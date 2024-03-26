@@ -2,7 +2,7 @@
 
 ## Create a high available broker with a shared store using the CLI
 
-1. In Workstation machoine stop the `broker1` and `broker2` brokers
+1. In Workstation machine, stop the `broker1` and `broker2` brokers
 
 ```bash
 export AMQ_HOME=$HOME/workshop-amq/apache-artemis-2.28.0.redhat-00003
@@ -116,5 +116,7 @@ ${AMQ_HOME}/instances/liveBroker/bin/artemis run
 ```bash
 2024-03-26 02:53:27,323 INFO  [org.apache.activemq.artemis.core.server] AMQ221008: live server wants to restart, restarting server in backup
 ```
+
+8. Press `CTRL+C` in booth terminals.
 
 End of Lab 9.
