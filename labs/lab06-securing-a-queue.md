@@ -8,7 +8,9 @@
 
 ```bash
 export AMQ_HOME=$HOME/workshop-amq/apache-artemis-2.28.0.redhat-00003
+echo "" >> ${AMQ_HOME}/instances/mybroker/etc/artemis-users.properties
 echo "myuser=mypassword" >> ${AMQ_HOME}/instances/mybroker/etc/artemis-users.properties
+echo "" >> ${AMQ_HOME}/instances/mybroker/etc/artemis-roles.properties
 echo "mygroup=myuser" >> ${AMQ_HOME}/instances/mybroker/etc/artemis-roles.properties
 ```
 
