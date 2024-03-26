@@ -2,58 +2,119 @@
 
 ## Create a high available broker with a shared store using the CLI
 
-1. Create a live broker
+1. In Workstation machoine stop the `broker1` and `broker2` brokers
 
-   ```sh
-   $ <AMQ_HOME>/bin/artemis create --shared-store --failover-on-shutdown --data <AMQ_HOME>/instances/liveBroker/data --user admin --password password --role admin --allow-anonymous y --clustered --host 127.0.0.1 --cluster-user clusterUser --cluster-password clusterPassword --max-hops 1 <AMQ_HOME>/instances/liveBroker
-   ```
+```bash
+export AMQ_HOME=$HOME/workshop-amq/apache-artemis-2.28.0.redhat-00003
+${AMQ_HOME}/instances/broker1/bin/artemis-service stop
 
-1. Create a backup broker
+Gracefully Stopping artemis-service
 
-   ```sh
-   $ <AMQ_HOME>/bin/artemis create --shared-store --failover-on-shutdown --slave --data <AMQ_HOME>/instances/liveBroker/data --user admin --password password --role admin --allow-anonymous y --clustered --host 127.0.0.1 --cluster-user clusterUser --cluster-password clusterPassword --max-hops 1 --port-offset 100 <AMQ_HOME>/instances/backupBroker
-   ```
+${AMQ_HOME}/instances/broker2/bin/artemis-service stop
 
-1. Add an `anycast` queue configuration to both brokers.
+Gracefully Stopping artemis-service
+```
 
-   ```XML
-     <address name="clusteredQueue">
-        <anycast>
-               <queue name="clusteredQueue" />
-        </anycast>
-     </address>
-   ```
+2. Open a new terminal and create a live `libeBroker` broker
 
-1. Start the brokers, first the `liveBroker`, then the `backupBroker`.
+```bash
+export AMQ_HOME=$HOME/workshop-amq/apache-artemis-2.28.0.redhat-00003
+${AMQ_HOME}/bin/artemis create --shared-store --failover-on-shutdown --data ${AMQ_HOME}/instances/liveBroker/data --user admin --password password --role admin --allow-anonymous y --clustered --host 127.0.0.1 --cluster-user clusterUser --cluster-password clusterPassword --max-hops 1 ${AMQ_HOME}/instances/liveBroker
 
-   >*You should see the backup broker announce itself as a **backup** in the logs.*
+Creating ActiveMQ Artemis instance at: /home/lab-user/workshop-amq/apache-artemis-2.28.0.redhat-00003/instances/liveBroker
 
-   ```sh
-   ...
-   21:46:08,600 INFO  [org.apache.activemq.artemis.core.server] AMQ221032: Waiting to become backup node
-   21:46:08,605 INFO  [org.apache.activemq.artemis.core.server] AMQ221033: ** got backup lock
-   …
-   21:46:13,998 INFO [org.apache.activemq.artemis] AMQ241001: HTTP Server started at http://localhost:8261 21:46:14,001 INFO [org.apache.activemq.artemis] AMQ241002: Artemis Jolokia REST API available at http://localhost:8261/jolokia
-   21:46:14,130 INFO  [org.apache.activemq.artemis.core.server] AMQ221031: backup announced
-   ```
+Auto tuning journal ...
+done! Your system can make 1.25 writes per millisecond, your journal-buffer-timeout will be 800000
 
-1. Terminate the `liveBroker`
+You can now start the broker by executing:  
+
+   "/home/lab-user/workshop-amq/apache-artemis-2.28.0.redhat-00003/instances/liveBroker/bin/artemis" run
+
+Or you can run the broker in the background using:
+
+   "/home/lab-user/workshop-amq/apache-artemis-2.28.0.redhat-00003/instances/liveBroker/bin/artemis-service" start
+```
+
+3. In a new terminal create backup `backupBroker` broker
+
+```bash
+export AMQ_HOME=$HOME/workshop-amq/apache-artemis-2.28.0.redhat-00003
+${AMQ_HOME}/bin/artemis create --shared-store --failover-on-shutdown --slave --data ${AMQ_HOME}/instances/liveBroker/data --user admin --password password --role admin --allow-anonymous y --clustered --host 127.0.0.1 --cluster-user clusterUser --cluster-password clusterPassword --max-hops 1 --port-offset 100 ${AMQ_HOME}/instances/backupBroker
+
+Creating ActiveMQ Artemis instance at: /home/lab-user/workshop-amq/apache-artemis-2.28.0.redhat-00003/instances/backupBroker
+
+Auto tuning journal ...
+done! Your system can make 1.35 writes per millisecond, your journal-buffer-timeout will be 740000
+
+You can now start the broker by executing:  
+
+   "/home/lab-user/workshop-amq/apache-artemis-2.28.0.redhat-00003/instances/backupBroker/bin/artemis" run
+
+Or you can run the broker in the background using:
+
+   "/home/lab-user/workshop-amq/apache-artemis-2.28.0.redhat-00003/instances/backupBroker/bin/artemis-service" start
+```
+
+4. Add an `anycast` queue configuration to both brokers.
+
+```bash
+# For liveBroker terminal
+export AMQ_HOME=$HOME/workshop-amq/apache-artemis-2.28.0.redhat-00003
+vim ${AMQ_HOME}/instances/liveBroker/etc/broker.xml
+
+# For backupBroker terminal
+export AMQ_HOME=$HOME/workshop-amq/apache-artemis-2.28.0.redhat-00003
+vim ${AMQ_HOME}/instances/backupBroker/etc/broker.xml
+```
+
+```XML
+<addresses>
+...
+...
+...
+  <address name="clusteredQueue">
+    <anycast>
+           <queue name="clusteredQueue"/>
+    </anycast>
+  </address>
+</addresses>
+```
+
+5. Start the brokers, first the `liveBroker`, then the `backupBroker`.
+
+```bash
+# Terminal for broker1
+${AMQ_HOME}/instances/liveBroker/bin/artemis run
+
+# Terminal for broker2
+${AMQ_HOME}/instances/backupBroker/bin/artemis run
+```
+
+>*You should see the backup broker announce itself as a **backup** in the logs.*
+
+```bash
+2024-03-26 02:50:32,801 INFO  [org.apache.activemq.artemis.core.server] AMQ221031: backup announced
+```
+
+6. Terminate the `liveBroker` by pressing `CTRL+C` 
 
    >*The `backupBroker` should start as live*
 
-   ```sh
-   ...
-   21:57:55,926 INFO  [org.apache.activemq.artemis.core.server] AMQ221010: Backup Server is now live
-   ```
+```bash
+2024-03-26 02:52:22,182 INFO  [org.apache.activemq.artemis.core.server] AMQ221010: Backup Server is now live
+```
 
-1. Restart the `liveBroker`
+7. Restart the `liveBroker`
+
+```bash
+# Terminal for broker1
+${AMQ_HOME}/instances/liveBroker/bin/artemis run
+```
 
    >*The `backupBroker` will automatically shutdown  and the `liveBroker` restart*
 
-   ```sh
-   ...
-   22:01:51,764 INFO  [org.apache.activemq.artemis.core.server] AMQ221008: live server wants to restart, restarting server in backup
-   ...
-   ```
+```bash
+2024-03-26 02:53:27,323 INFO  [org.apache.activemq.artemis.core.server] AMQ221008: live server wants to restart, restarting server in backup
+```
 
 End of Lab 9.
