@@ -94,13 +94,13 @@ NAME                AGE
 testqueue-address   9s
 ```
 
-2. Run the artemis command to consume from the default address
+2. Run the artemis command to consume from the address
 
 ```bash
 oc exec -ti ex-aao-ss-0 -c ex-aao-container -n amq-broker -- amq-broker/bin/artemis consumer --url tcp://ex-aao-ss-0.ex-aao-hdls-svc.amq-broker.svc.cluster.local:61616 --user admin --password admin --destination queue://testQueue --message-count 5
 ```
 
-3. In another terminal/console do the same but this time to produce messages to the same default address
+3. In another terminal/console do the same but this time to produce messages to the same address
 
 ```bash
 oc exec -ti ex-aao-ss-0 -c ex-aao-container -n amq-broker -- amq-broker/bin/artemis producer --url tcp://ex-aao-ss-0.ex-aao-hdls-svc.amq-broker.svc.cluster.local:61616 --user admin --password admin --destination queue://testQueue --message-count 5
